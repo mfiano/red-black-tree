@@ -341,8 +341,8 @@
   (setf (color node) :black)
   (values))
 
-(u:fn-> delete (tree node) (values))
-(defun delete (tree node)
+(u:fn-> delete-node (tree node) (values))
+(defun delete-node (tree node)
   (declare (optimize speed))
   (let* ((x nil)
          (y node)
