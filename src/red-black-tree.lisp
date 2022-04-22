@@ -1,5 +1,18 @@
 (in-package #:red-black-tree)
 
+(defstruct (tree
+            (:constructor %make-tree)
+            (:conc-name nil)
+            (:predicate nil)
+            (:copier nil))
+  (sentinel nil :type (or node null))
+  (root nil :type (or node null))
+  (key-func #'identity :type function)
+  (sort-func #'< :type function))
+
+(u:define-printer (tree stream :type nil)
+  (format stream "TREE"))
+
 (declaim (inline %make-node))
 (defstruct (node
             (:constructor %make-node)
@@ -16,19 +29,6 @@
 
 (u:define-printer (node stream :type nil)
   (format stream "NODE"))
-
-(defstruct (tree
-            (:constructor %make-tree)
-            (:conc-name nil)
-            (:predicate nil)
-            (:copier nil))
-  (sentinel nil :type (or node null))
-  (root nil :type (or node null))
-  (key-func #'identity :type function)
-  (sort-func #'< :type function))
-
-(u:define-printer (tree stream :type nil)
-  (format stream "TREE"))
 
 (u:fn-> make-node (tree t) node)
 (defun make-node (tree item)

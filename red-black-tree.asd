@@ -11,4 +11,5 @@
   :serial t
   :components
   ((:file "package")
-   (:file "red-black-tree")))
+   (:file "red-black-tree"
+    :around-compile (lambda (x) (funcall x #+sbcl :block-compile #+sbcl t)))))
