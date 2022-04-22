@@ -290,56 +290,56 @@
 (u:fn-> delete/fixup (tree node) (values))
 (defun delete/fixup (tree node)
   (declare (optimize speed))
-  (let ((node node))
-    (u:while (and (not (eq node (root tree)))
-                  (eq (color node) :black))
-      (if (eq node (left (parent node)))
-          (let ((w (right (parent node))))
+  (let ((x node))
+    (u:while (and (not (eq x (root tree)))
+                  (eq (color x) :black))
+      (if (eq x (left (parent x)))
+          (let ((w (right (parent x))))
             (when (eq (color w) :red)
               (setf (color w) :black
-                    (color (parent node)) :red)
-              (rotate/left tree (parent node))
-              (setf w (right (parent node))))
+                    (color (parent x)) :red)
+              (rotate/left tree (parent x))
+              (setf w (right (parent x))))
             (cond
               ((and (eq (color (left w)) :black)
                     (eq (color (right w)) :black))
                (setf (color w) :red
-                     node (parent node)))
+                     x (parent x)))
               (t
                (when (eq (color (right w)) :black)
                  (setf (color (left w)) :black
                        (color w) :red)
                  (rotate/right tree w)
-                 (setf w (right (parent node))))
-               (setf (color w) (color (parent node))
-                     (color (parent node)) :black
+                 (setf w (right (parent x))))
+               (setf (color w) (color (parent x))
+                     (color (parent x)) :black
                      (color (right w)) :black)
-               (rotate/left tree (parent node))
-               (setf node (root tree)))))
-          (let ((w (left (parent node))))
+               (rotate/left tree (parent x))
+               (setf x (root tree)))))
+          (let ((w (left (parent x))))
             (when (eq (color w) :red)
               (setf (color w) :black
-                    (color (parent node)) :red)
-              (rotate/right tree (parent node))
-              (setf w (left (parent node))))
+                    (color (parent x)) :red)
+              (rotate/right tree (parent x))
+              (setf w (left (parent x))))
             (cond
               ((and (eq (color (right w)) :black)
                     (eq (color (left w)) :black))
                (setf (color w) :red
-                     node (parent node)))
+                     x (parent x)))
               (t
                (when (eq (color (left w)) :black)
                  (setf (color (right w)) :black
                        (color w) :red)
                  (rotate/left tree w)
-                 (setf w (left (parent node))))
-               (setf (color w) (color (parent node))
-                     (color (parent node)) :black
+                 (setf w (left (parent x))))
+               (setf (color w) (color (parent x))
+                     (color (parent x)) :black
                      (color (left w)) :black)
-               (rotate/right tree (parent node))
-               (setf node (root tree))))))))
-  (setf (color node) :black)
-  (values))
+               (rotate/right tree (parent x))
+               (setf x (root tree)))))))
+    (setf (color x) :black)
+    (values)))
 
 (u:fn-> delete-node (tree node) (values))
 (defun delete-node (tree node)
