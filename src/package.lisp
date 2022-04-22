@@ -5,10 +5,12 @@
    (#:u #:mfiano-utils))
   (:use #:cl)
   (:shadow
+   #:delete
    #:find
    #:max
    #:min)
   (:export
+   #:delete
    #:delete-node
    #:find
    #:insert

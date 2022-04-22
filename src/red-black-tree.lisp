@@ -376,3 +376,9 @@
           (left node) nil
           (right node) nil)
     (values)))
+
+(u:fn-> delete (tree t) (values (or node null) &optional boolean))
+(defun delete (tree item)
+  (u:when-let ((node (node-p (nth-value 1 (find tree item)))))
+    (delete-node tree node)
+    (values node t)))
