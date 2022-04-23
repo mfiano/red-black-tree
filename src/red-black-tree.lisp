@@ -30,6 +30,13 @@
 (u:define-printer (node stream :type nil)
   (format stream "NODE"))
 
+(u:fn-> node-p ((or node null)) (or node null))
+(declaim (inline node-p))
+(defun node-p (node)
+  (declare (optimize speed))
+  (unless (and node (eq node (sentinel (tree node))))
+    node))
+
 (u:fn-> make-node (tree t) node)
 (defun make-node (tree item)
   (declare (optimize speed))
@@ -48,25 +55,18 @@
           (root tree) sentinel)
     tree))
 
-(u:fn-> node-p ((or node null)) (or node null))
-(declaim (inline node-p))
-(defun node-p (node)
-  (declare (optimize speed))
-  (unless (and node (eq node (sentinel (tree node))))
-    node))
-
 (defun valid-p (tree)
   (declare (optimize speed))
   (let ((previous nil))
-    (labels ((%check (node sorter)
-               (declare (function sorter))
+    (labels ((%check (node sort-func)
+               (declare (function sort-func))
                (when (node-p node)
-                 (when (or (null (%check (left node) sorter))
-                           (and previous (funcall sorter (key node) (key previous))))
+                 (when (or (null (%check (left node) sort-func))
+                           (and previous (funcall sort-func (key node) (key previous))))
                    (return-from %check))
                  (setf previous node)
                  (return-from %check
-                   (%check (right node) sorter)))
+                   (%check (right node) sort-func)))
                t))
       (%check (root tree) (sort-func tree)))))
 
@@ -274,18 +274,19 @@
       (%insert tree node)
       node)))
 
-(u:fn-> transplant (tree node node) null)
+(u:fn-> transplant (tree node node) (values))
 (defun transplant (tree u v)
   (declare (optimize speed))
-  (cond
-    ((not (node-p (parent u)))
-     (setf (root tree) v))
-    ((eq u (left (parent u)))
-     (setf (left (parent u)) v))
-    (t
-     (setf (right (parent u)) v)))
-  (setf (parent v) (parent u))
-  (values))
+  (let ((parent (parent u)))
+    (cond
+      ((not (node-p parent))
+       (setf (root tree) v))
+      ((eq u (left parent))
+       (setf (left parent) v))
+      (t
+       (setf (right parent) v)))
+    (setf (parent v) parent)
+    (values)))
 
 (u:fn-> delete/fixup (tree node) (values))
 (defun delete/fixup (tree node)
